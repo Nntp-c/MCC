@@ -244,7 +244,7 @@ tbody td{padding:5px 12px;white-space:nowrap}
 
 <script>
 /* ── CONFIG ── */
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbygtJRb2mWw5VkgXPDQXwKAlsffIWW_Rni6EmKVuqf5WT6PnDERrnak1b30ueIR3EfgFA/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfjtbnJzyEDSG077sL5r8w8nSqUxyViEtVz2dxVHSEeQgIIac_Z7xsCKH8XsL2uCGhSQ/exec';
 const REFRESH_MS = 5 * 60 * 1000;
 
 const MO  = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -309,7 +309,7 @@ async function loadAll() {
   document.getElementById('errbanner').style.display='none';
 
   try {
-    const res = await fetch(APPS_SCRIPT_URL);
+    const res = await fetch(APPS_SCRIPT_URL + '?t=' + Date.now());
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
 
