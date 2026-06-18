@@ -244,7 +244,7 @@ tbody td{padding:5px 12px;white-space:nowrap}
 
 <script>
 /* ── CONFIG ── */
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPVkqqXnN3SOLtrjFMXbcnNWrHL-f_iEDw1sI9mQXIQ5nY3Cz2yBCz5_frns04D2a83A/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbygtJRb2mWw5VkgXPDQXwKAlsffIWW_Rni6EmKVuqf5WT6PnDERrnak1b30ueIR3EfgFA/exec';
 const REFRESH_MS = 5 * 60 * 1000;
 
 const MO  = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -317,11 +317,21 @@ async function loadAll() {
     let totalRows=0;
 
     Object.entries(json).forEach(([mkt, data])=>{
-      if(!data || !Array.isArray(data)) return;
-      totalRows+=data.length;
-      const {monthly,vessels}=processRaw(mkt,data);
-      MONTHLY=MONTHLY.concat(monthly);
-      VESSELS=VESSELS.concat(vessels);
+      if(!data) return;
+
+      // New format: { monthly: [], vessels: [] }
+      if(data.monthly && Array.isArray(data.monthly)) {
+        MONTHLY = MONTHLY.concat(data.monthly.map(d=>({...d, mkt})));
+        VESSELS = VESSELS.concat(data.vessels.map(d=>({...d, mkt})));
+        totalRows += data.monthly.length + data.vessels.length;
+      }
+      // Old format: raw array of rows
+      else if(Array.isArray(data)) {
+        totalRows += data.length;
+        const {monthly, vessels} = processRaw(mkt, data);
+        MONTHLY = MONTHLY.concat(monthly);
+        VESSELS = VESSELS.concat(vessels);
+      }
     });
 
     const pm=new Map();
@@ -334,7 +344,8 @@ async function loadAll() {
     rebuildMon();
     const ts=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
     setStatus('ok',`Live · ${ts}`);
-    document.getElementById('ts-label').textContent=`${totalRows.toLocaleString()} rows`;
+    const totalFeu = MONTHLY.reduce((s,d)=>s+d.feu,0);
+    document.getElementById('ts-label').textContent=`${totalFeu.toLocaleString()} FEU · ${VESSELS.length} vessels`;
     document.getElementById('overlay').style.display='none';
     render();
 
