@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCC Amazon – Booking Summary 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#1a1a2e;--panel:#16213e;--card2:#1b2a4a;--blue:#3b82f6;--green:#10b981;--amber:#f59e0b;--pink:#ec4899;--purple:#8b5cf6;--accent:#e94560;--border:rgba(255,255,255,0.07);--text:#e2e8f0;--muted:#94a3b8;--dim:#475569}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;height:44px;background:#0a0f1e;border-bottom:2px solid var(--accent);flex-shrink:0}
+.tb-logo{display:flex;align-items:center;gap:10px;padding:0 20px 0 16px;height:100%;background:var(--accent);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 100%,0 100%);padding-right:28px}
+.tb-logo-icon{width:22px;height:22px;background:rgba(255,255,255,.25);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff}
+.tb-title{font-size:13px;font-weight:600;color:#fff;white-space:nowrap}
+.tb-nav{display:flex;align-items:center;height:100%;padding:0 16px;gap:4px}
+.tb-nav-item{padding:4px 14px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:3px;white-space:nowrap}
+.tb-nav-item.active{background:rgba(255,255,255,.08);color:var(--text)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;padding:0 16px;flex-wrap:wrap}
+.spill{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:3px;font-size:11px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#10b981}
+.sdot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.tb-sub{font-size:11px;color:var(--dim);white-space:nowrap}
+.filterbar{display:flex;align-items:center;gap:16px;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.fb-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.fb-sep{width:1px;height:18px;background:var(--border)}
+.chip{padding:3px 11px;border-radius:2px;font-size:11px;font-weight:500;border:1px solid;cursor:pointer;user-select:none;transition:all .12s}
+.chip-all{border-color:var(--purple);color:var(--purple)}.chip-all.on{background:var(--purple);color:#fff}
+.chip-992{border-color:var(--blue);color:var(--blue)}.chip-992.on{background:var(--blue);color:#fff}
+.chip-993{border-color:var(--amber);color:var(--amber)}.chip-993.on{background:var(--amber);color:#fff}
+.chip-840{border-color:var(--green);color:var(--green)}.chip-840.on{background:var(--green);color:#fff}
+.mchip{padding:2px 8px;border-radius:2px;font-size:10px;border:1px solid var(--border);cursor:pointer;color:var(--dim);user-select:none;transition:all .12s}
+.mchip.on{background:rgba(255,255,255,.08);color:var(--text);border-color:rgba(255,255,255,.15)}
+.layout{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0;overflow:hidden}
+.sidebar{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:14px 12px;gap:12px}
+.sb-title{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);padding-bottom:6px;border-bottom:1px solid var(--border)}
+.kcard{background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:10px 12px;position:relative;overflow:hidden}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.ka::before{background:linear-gradient(90deg,var(--blue),var(--purple),var(--green))}
+.k992::before{background:var(--blue)}.k840::before{background:var(--green)}.k993::before{background:var(--amber)}
+.klabel{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.kvalue{font-size:22px;font-weight:700;letter-spacing:-1px;line-height:1}
+.kunit{font-size:11px;font-weight:400;color:var(--muted);margin-left:2px}
+.ksub{font-size:9px;color:var(--dim);margin-top:3px}
+.kbar{height:2px;border-radius:1px;margin-top:8px;background:rgba(255,255,255,.06);overflow:hidden}
+.kbar-fill{height:100%;border-radius:1px;transition:width .5s}
+.content{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.charts-top{display:grid;grid-template-columns:1fr 280px;gap:1px;background:var(--border);border-bottom:1px solid var(--border);flex-shrink:0}
+.chart-panel{background:var(--panel);padding:14px 16px}
+.cp-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.cp-title span{font-size:9px;font-weight:400;color:var(--dim)}
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.lb{width:8px;height:8px;border-radius:1px}
+.donut-wrap{position:relative}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.dc-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-1px}
+.dc-lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.dleg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.dleg-item{display:flex;align-items:center;gap:5px;font-size:10px}
+.dleg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dleg-label{color:var(--dim);flex:1;font-size:9px}
+.dleg-val{font-weight:600;font-size:10px}
+.table-panel{flex:1;background:var(--panel);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.table-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.table-count{font-size:10px;color:var(--dim)}
+.table-scroll{overflow-x:auto;overflow-y:auto;flex:1;min-height:0}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead{position:sticky;top:0;z-index:5}
+thead th{background:#0d1525;text-align:left;padding:6px 12px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .08s}
+tbody tr:hover{background:rgba(255,255,255,.04)}
+tbody td{padding:5px 12px;white-space:nowrap}
+.tag{display:inline-block;padding:1px 7px;border-radius:2px;font-size:10px;font-weight:600}
+.t992{background:rgba(59,130,246,.15);color:#60a5fa}.t993{background:rgba(245,158,11,.15);color:#fbbf24}.t840{background:rgba(16,185,129,.15);color:#34d399}
+.barmini{display:inline-block;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px;opacity:.8}
+.nodata{padding:40px;text-align:center;color:var(--dim);font-size:12px}
+.info-badge{padding:3px 10px;border-radius:3px;font-size:10px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#60a5fa}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-logo-icon">M</div>
+    <div class="tb-title">MCC Amazon · Booking Summary 2026</div>
+  </div>
+  <div class="tb-nav">
+    <div class="tb-nav-item active">Overview</div>
+    <div class="tb-nav-item">By Vessel</div>
+    <div class="tb-nav-item">By Market</div>
+  </div>
+  <div class="tb-right">
+    <div class="spill"><div class="sdot"></div><span id="stxt">Ready</span></div>
+    <div class="tb-sub" id="ts-label"></div>
+    <div class="info-badge">Source: US.xlsx · EU.xlsx · JP.xlsx</div>
+  </div>
+</div>
+
+<div class="filterbar">
+  <span class="fb-label">Market</span>
+  <div style="display:flex;gap:4px;flex-wrap:wrap">
+    <span class="chip chip-all on" data-m="all" onclick="toggleM('all')">All</span>
+    <span class="chip chip-992" data-m="992" onclick="toggleM('992')">992 – US</span>
+    <span class="chip chip-993" data-m="993" onclick="toggleM('993')">993 – JP</span>
+    <span class="chip chip-840" data-m="840" onclick="toggleM('840')">840 – EU</span>
+  </div>
+  <div class="fb-sep"></div>
+  <span class="fb-label">Month</span>
+  <div id="mfilter" style="display:flex;gap:4px;flex-wrap:wrap">
+    <span class="mchip on" data-k="all" onclick="toggleMon('all')">All</span>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sb-title">Summary</div>
+    <div class="kcard ka">
+      <div class="klabel">Total Volume</div>
+      <div class="kvalue" id="kall" style="color:#a78bfa">–<span class="kunit">FEU</span></div>
+      <div class="ksub" id="kall2">–</div>
+      <div class="kbar"><div class="kbar-fill" style="width:100%;background:var(--purple)"></div></div>
+    </div>
+    <div class="sb-title">By Market</div>
+    <div class="kcard k992">
+      <div class="klabel">992 · US (Ocean)</div>
+      <div class="kvalue" id="k992" style="color:#60a5fa">–<span class="kunit">FEU</span></div>
+      <div class="ksub" id="k992s">–</div>
+      <div class="kbar"><div class="kbar-fill" id="bar992" style="width:0%;background:var(--blue)"></div></div>
+    </div>
+    <div class="kcard k840">
+      <div class="klabel">840 · EU (Ocean)</div>
+      <div class="kvalue" id="k840" style="color:#34d399">–<span class="kunit">FEU</span></div>
+      <div class="ksub" id="k840s">–</div>
+      <div class="kbar"><div class="kbar-fill" id="bar840" style="width:0%;background:var(--green)"></div></div>
+    </div>
+    <div class="kcard k993">
+      <div class="klabel">993 · JP (Ocean)</div>
+      <div class="kvalue" id="k993" style="color:#fbbf24">–<span class="kunit">FEU</span></div>
+      <div class="ksub" id="k993s">–</div>
+      <div class="kbar"><div class="kbar-fill" id="bar993" style="width:0%;background:var(--amber)"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="charts-top">
+      <div class="chart-panel">
+        <div class="cp-title">FEU per Month by Market <span>Stacked · Actual ETD</span></div>
+        <div class="leg" id="leg"></div>
+        <div style="position:relative;width:100%;height:190px">
+          <canvas id="barchart" role="img" aria-label="Stacked bar chart of FEU per month">–</canvas>
+        </div>
+      </div>
+      <div class="chart-panel">
+        <div class="cp-title">Market Share <span>FEU</span></div>
+        <div class="donut-wrap">
+          <div style="position:relative;width:100%;height:155px">
+            <canvas id="donut" role="img" aria-label="Donut chart of market share">–</canvas>
+          </div>
+          <div class="donut-center">
+            <div class="dc-val" id="dc-val">–</div>
+            <div class="dc-lbl">Total FEU</div>
+          </div>
+        </div>
+        <div class="dleg" id="dleg"></div>
+      </div>
+    </div>
+
+    <div class="table-panel">
+      <div class="table-header">
+        <div class="table-title">Vessel Detail · FEU by Market / Month / Vessel</div>
+        <div class="table-count" id="tcnt"></div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Year</th><th>Month</th><th>Market</th>
+            <th>Mother Vessel · Voyage</th><th>FEUs</th><th>TEUs</th><th>Share</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="nodata" id="nodata" style="display:none">No data for selected filters</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RAW = {"992":{"monthly":[{"mkt":"992","year":2025,"month":8,"feu":4.0},{"mkt":"992","year":2025,"month":11,"feu":1.0},{"mkt":"992","year":2025,"month":12,"feu":32.0},{"mkt":"992","year":2026,"month":1,"feu":16.0},{"mkt":"992","year":2026,"month":2,"feu":78.0},{"mkt":"992","year":2026,"month":3,"feu":248.0},{"mkt":"992","year":2026,"month":4,"feu":228.0},{"mkt":"992","year":2026,"month":5,"feu":279.0},{"mkt":"992","year":2026,"month":6,"feu":178.0},{"mkt":"992","year":2026,"month":7,"feu":11.0}],"vessels":[{"mkt":"992","year":2025,"month":8,"vessel":"YM WORTH 048E","feu":4.0},{"mkt":"992","year":2025,"month":11,"vessel":"ZIM BANGKOK 13E","feu":1.0},{"mkt":"992","year":2025,"month":12,"vessel":"ZIM MOUNT DENALI 11E","feu":12.0},{"mkt":"992","year":2025,"month":12,"vessel":"ZIM MOUNT FUJI 9E","feu":8.0},{"mkt":"992","year":2025,"month":12,"vessel":"ZIM MOUNT EVEREST 12E","feu":11.0},{"mkt":"992","year":2025,"month":12,"vessel":"ZIM MOUNT VINSON 9E","feu":1.0},{"mkt":"992","year":2026,"month":1,"vessel":"MSC ANCHORAGE GU602W","feu":2.0},{"mkt":"992","year":2026,"month":1,"vessel":"ONE MACKINAC 044E","feu":4.0},{"mkt":"992","year":2026,"month":1,"vessel":"ONE EAGLE 037E","feu":2.0},{"mkt":"992","year":2026,"month":1,"vessel":"ONE MUNCHEN 043E","feu":8.0},{"mkt":"992","year":2026,"month":2,"vessel":"MSC ARCHIMIDIS VIII GU605W","feu":3.0},{"mkt":"992","year":2026,"month":2,"vessel":"ZIM THAILAND 15E","feu":6.0},{"mkt":"992","year":2026,"month":2,"vessel":"MSC BRIDGEPORT GU606W","feu":3.0},{"mkt":"992","year":2026,"month":2,"vessel":"ZIM TOPAZ 7E","feu":32.0},{"mkt":"992","year":2026,"month":2,"vessel":"GSL NINGBO GU608W","feu":8.0},{"mkt":"992","year":2026,"month":2,"vessel":"ONE WREN 029E","feu":18.0},{"mkt":"992","year":2026,"month":2,"vessel":"TIANJIN 60E","feu":8.0},{"mkt":"992","year":2026,"month":3,"vessel":"MSC MAPUTO GU609W","feu":2.0},{"mkt":"992","year":2026,"month":3,"vessel":"ZIM MOUNT BLANC 12E","feu":20.0},{"mkt":"992","year":2026,"month":3,"vessel":"MSC CHIARA X GU610W","feu":9.0},{"mkt":"992","year":2026,"month":3,"vessel":"ZIM WILMINGTON 24E","feu":25.0},{"mkt":"992","year":2026,"month":3,"vessel":"ONE MILLAU 046E","feu":29.0},{"mkt":"992","year":2026,"month":3,"vessel":"BREMEN GU611W","feu":2.0},{"mkt":"992","year":2026,"month":3,"vessel":"ZIM GEMINI 9E","feu":40.0},{"mkt":"992","year":2026,"month":3,"vessel":"ONE MADRID 029E","feu":12.0},{"mkt":"992","year":2026,"month":3,"vessel":"ZIM MOUNT FUJI 10E","feu":20.0},{"mkt":"992","year":2026,"month":3,"vessel":"MSC RIKKU GE612E","feu":8.0},{"mkt":"992","year":2026,"month":3,"vessel":"ONE MONACO 030E","feu":56.0},{"mkt":"992","year":2026,"month":3,"vessel":"MSC JUBILEE IX GU613W","feu":9.0},{"mkt":"992","year":2026,"month":3,"vessel":"ZIM MOUNT EVEREST 13E","feu":12.0},{"mkt":"992","year":2026,"month":3,"vessel":"VUNG TAU EXPRESS 614E","feu":4.0},{"mkt":"992","year":2026,"month":4,"vessel":"MSC MUMBAI VIII  V.GE615E","feu":11.0},{"mkt":"992","year":2026,"month":4,"vessel":"ZIM MOUNT VINSON 10E","feu":5.0},{"mkt":"992","year":2026,"month":4,"vessel":"ONE MILANO 032E","feu":76.0},{"mkt":"992","year":2026,"month":4,"vessel":"MAERSK ALGOL 615E","feu":6.0},{"mkt":"992","year":2026,"month":4,"vessel":"EDISON 1TUHSE1MA","feu":17.0},{"mkt":"992","year":2026,"month":4,"vessel":"MSC LISBON IX GU615W","feu":15.0},{"mkt":"992","year":2026,"month":4,"vessel":"ZIM MOUNT OLYMPUS 10E","feu":13.0},{"mkt":"992","year":2026,"month":4,"vessel":"SEASPAN GANGES 616E","feu":10.0},{"mkt":"992","year":2026,"month":4,"vessel":"ZIM MOUNT KILIMANJARO 11E","feu":2.0},{"mkt":"992","year":2026,"month":4,"vessel":"MSC DENISSE X GU616W","feu":2.0},{"mkt":"992","year":2026,"month":4,"vessel":"CISNES 617E","feu":5.0},{"mkt":"992","year":2026,"month":4,"vessel":"MSC ILARIA FV616N","feu":6.0},{"mkt":"992","year":2026,"month":4,"vessel":"SAPPHIRE TOWER 003E","feu":7.0},{"mkt":"992","year":2026,"month":4,"vessel":"C HAMBURG GU617W","feu":14.0},{"mkt":"992","year":2026,"month":4,"vessel":"ZIM MOUNT ELBRUS 10E","feu":29.0},{"mkt":"992","year":2026,"month":4,"vessel":"MAERSK ALFIRK 618E","feu":10.0},{"mkt":"992","year":2026,"month":5,"vessel":"MSC BEATRICE FV617N","feu":21.0},{"mkt":"992","year":2026,"month":5,"vessel":"CMA CGM BRAZIL 1TUI4E1MA","feu":4.0},{"mkt":"992","year":2026,"month":5,"vessel":"PUSAN C GU618W","feu":12.0},{"mkt":"992","year":2026,"month":5,"vessel":"ZIM SCORPIO 9E","feu":30.0},{"mkt":"992","year":2026,"month":5,"vessel":"ZIM PEARL 10E","feu":42.0},{"mkt":"992","year":2026,"month":5,"vessel":"MAERSK ANTARES 620E","feu":51.0},{"mkt":"992","year":2026,"month":5,"vessel":"ZIM THAILAND 16E","feu":22.0},{"mkt":"992","year":2026,"month":5,"vessel":"MAERSK ALTAIR 621E","feu":35.0},{"mkt":"992","year":2026,"month":5,"vessel":"ATACAMA 621E","feu":4.0},{"mkt":"992","year":2026,"month":5,"vessel":"ONE MUNCHEN 044E","feu":10.0},{"mkt":"992","year":2026,"month":5,"vessel":"VUNG TAU EXPRESS 622E","feu":17.0},{"mkt":"992","year":2026,"month":5,"vessel":"APL PARIS 0P51CE1MA","feu":10.0},{"mkt":"992","year":2026,"month":5,"vessel":"MSC MELATILDE FV621N","feu":21.0},{"mkt":"992","year":2026,"month":6,"vessel":"APL SENTOSA 0XRB9E1MA","feu":18.0},{"mkt":"992","year":2026,"month":6,"vessel":"MAERSK ALGOL 623E","feu":12.0},{"mkt":"992","year":2026,"month":6,"vessel":"YM TRAVEL 027E","feu":1.0},{"mkt":"992","year":2026,"month":6,"vessel":"MSC MONICA CRISTINA FV622N","feu":3.0},{"mkt":"992","year":2026,"month":6,"vessel":"SEASPAN GANGES 624E","feu":17.0},{"mkt":"992","year":2026,"month":6,"vessel":"CMA CGM MUSCA 0P51KE1MA","feu":10.0},{"mkt":"992","year":2026,"month":6,"vessel":"MSC MARA FV623N","feu":10.0},{"mkt":"992","year":2026,"month":6,"vessel":"OOCL TULIP 004E","feu":11.0},{"mkt":"992","year":2026,"month":6,"vessel":"ONE MANCHESTER 046E","feu":5.0},{"mkt":"992","year":2026,"month":6,"vessel":"MSC LORENZA FV624N","feu":30.0},{"mkt":"992","year":2026,"month":6,"vessel":"OOCL MAGNOLIA 0UPO3E1MA","feu":2.0},{"mkt":"992","year":2026,"month":6,"vessel":"ERVING 0M708E1MA","feu":30.0},{"mkt":"992","year":2026,"month":6,"vessel":"MSC DARLENE FV625N","feu":29.0},{"mkt":"992","year":2026,"month":7,"vessel":"MSC ILARIA FV626N","feu":7.0},{"mkt":"992","year":2026,"month":7,"vessel":"ONE GRUS 031E","feu":4.0}]},"840":{"monthly":[{"mkt":"840","year":2025,"month":9,"feu":0.5},{"mkt":"840","year":2025,"month":12,"feu":1.5},{"mkt":"840","year":2026,"month":1,"feu":4.5},{"mkt":"840","year":2026,"month":2,"feu":11.0},{"mkt":"840","year":2026,"month":3,"feu":29.0},{"mkt":"840","year":2026,"month":4,"feu":23.5},{"mkt":"840","year":2026,"month":5,"feu":28.5},{"mkt":"840","year":2026,"month":6,"feu":45.5}],"vessels":[{"mkt":"840","year":2025,"month":9,"vessel":"SINGAPORE EXPRESS 539W","feu":0.5},{"mkt":"840","year":2025,"month":12,"vessel":"EVER ARM 0LALRW1MA","feu":1.0},{"mkt":"840","year":2025,"month":12,"vessel":"CMA CGM LOUVRE 0FMLCW1MA","feu":0.5},{"mkt":"840","year":2026,"month":1,"vessel":"Ane Maersk 604W","feu":1.0},{"mkt":"840","year":2026,"month":1,"vessel":"DUBAI EXPRESS 610N","feu":1.5},{"mkt":"840","year":2026,"month":1,"vessel":"MADISON MAERSK 603W","feu":0.5},{"mkt":"840","year":2026,"month":1,"vessel":"MARSTAL MAERSK 604W","feu":1.5},{"mkt":"840","year":2026,"month":2,"vessel":"KASSIAKOS 613N","feu":3.0},{"mkt":"840","year":2026,"month":2,"vessel":"MAGLEBY MAERSK 606W","feu":2.0},{"mkt":"840","year":2026,"month":2,"vessel":"MERETE MAERSK 606W","feu":2.0},{"mkt":"840","year":2026,"month":2,"vessel":"ANTONIA MAERSK 609W","feu":1.0},{"mkt":"840","year":2026,"month":2,"vessel":"MARY MAERSK 607W","feu":2.0},{"mkt":"840","year":2026,"month":2,"vessel":"MARCHEN MAERSK 608W","feu":1.0},{"mkt":"840","year":2026,"month":3,"vessel":"EVELYN MAERSK 610W","feu":2.5},{"mkt":"840","year":2026,"month":3,"vessel":"KASSIAKOS 615N","feu":6.0},{"mkt":"840","year":2026,"month":3,"vessel":"BRUSSELS MAERSK 610W","feu":6.0},{"mkt":"840","year":2026,"month":3,"vessel":"HAMBURG EXPRESS 610W","feu":3.0},{"mkt":"840","year":2026,"month":3,"vessel":"MUNKEBO MAERSK 610W","feu":1.0},{"mkt":"840","year":2026,"month":3,"vessel":"AXEL MAERSK 611W","feu":0.5},{"mkt":"840","year":2026,"month":3,"vessel":"DAMIETTA EXPRESS 612W","feu":1.0},{"mkt":"840","year":2026,"month":3,"vessel":"CMA CGM GRAND PALAIS 0FMGNW1MA","feu":2.0},{"mkt":"840","year":2026,"month":3,"vessel":"Bangkok Maersk 613W","feu":2.0},{"mkt":"840","year":2026,"month":3,"vessel":"KASSIAKOS 619N","feu":1.0},{"mkt":"840","year":2026,"month":3,"vessel":"MATZ MAERSK 612W","feu":3.0},{"mkt":"840","year":2026,"month":3,"vessel":"CMA CGM VENDOME 0FMGHW1MA","feu":1.0},{"mkt":"840","year":2026,"month":4,"vessel":"Maersk Cincinnati 614W","feu":1.5},{"mkt":"840","year":2026,"month":4,"vessel":"KASSIAKOS 619N","feu":0.5},{"mkt":"840","year":2026,"month":4,"vessel":"MARSEILLE MAERS 613W","feu":0.5},{"mkt":"840","year":2026,"month":4,"vessel":"BANGKOK EXPRESS 614W","feu":3.0},{"mkt":"840","year":2026,"month":4,"vessel":"Maersk Cambridge 615W","feu":2.5},{"mkt":"840","year":2026,"month":4,"vessel":"Dubai Express 620N","feu":1.0},{"mkt":"840","year":2026,"month":4,"vessel":"MAYVIEW MAERSK 614W","feu":2.0},{"mkt":"840","year":2026,"month":4,"vessel":"SINGAPORE EXPRESS 615W","feu":1.0},{"mkt":"840","year":2026,"month":4,"vessel":"MAREN MAERSK 615W","feu":1.0},{"mkt":"840","year":2026,"month":4,"vessel":"DUBAI EXPRESS 622N","feu":1.5},{"mkt":"840","year":2026,"month":4,"vessel":"MARIBO MAERSK 616W","feu":3.0},{"mkt":"840","year":2026,"month":4,"vessel":"CMA CGM SAINT GERMAIN 0FMGFW1MA","feu":4.0},{"mkt":"840","year":2026,"month":4,"vessel":"TIHAMA 618W","feu":2.0},{"mkt":"840","year":2026,"month":5,"vessel":"Brisbane Maersk 620W","feu":2.0},{"mkt":"840","year":2026,"month":5,"vessel":"MARIE MAERSK 620W","feu":7.0},{"mkt":"840","year":2026,"month":5,"vessel":"nan nan","feu":4.0},{"mkt":"840","year":2026,"month":5,"vessel":"ESTELLE MAERSK 621W","feu":2.5},{"mkt":"840","year":2026,"month":5,"vessel":"DUBAI EXPRESS 627N","feu":1.5},{"mkt":"840","year":2026,"month":5,"vessel":"DUBAI EXPRESS 626N","feu":0.5},{"mkt":"840","year":2026,"month":5,"vessel":"MARGRETHE MAERSK 621W","feu":2.0},{"mkt":"840","year":2026,"month":5,"vessel":"BERLIN EXPRESS 621W","feu":1.0},{"mkt":"840","year":2026,"month":5,"vessel":"KASSIAKOS 627N","feu":1.0},{"mkt":"840","year":2026,"month":5,"vessel":"PARIS EXPRESS 622W","feu":1.0},{"mkt":"840","year":2026,"month":5,"vessel":"EVER GIFTED 02MNPW1MA","feu":1.0},{"mkt":"840","year":2026,"month":5,"vessel":"GDANSK EXPRESS 622W","feu":2.0},{"mkt":"840","year":2026,"month":5,"vessel":"ANTONIA MAERSK 622W","feu":1.0},{"mkt":"840","year":2026,"month":6,"vessel":"OOCL FINLAND 0VANXW1MA","feu":5.5},{"mkt":"840","year":2026,"month":5,"vessel":"EVELYN MAERSK 623W","feu":2.0},{"mkt":"840","year":2026,"month":6,"vessel":"CMA CGM SEINE 0FMMOW1MA","feu":17.0},{"mkt":"840","year":2026,"month":6,"vessel":"EVER GLOBE 0LAN7W1MA","feu":3.0},{"mkt":"840","year":2026,"month":6,"vessel":"ROTTERDAM EXPRESS 623W","feu":4.0},{"mkt":"840","year":2026,"month":6,"vessel":"NEW YORK EXPRESS 624W","feu":1.0},{"mkt":"840","year":2026,"month":6,"vessel":"SEASPAN PRIDE 625W","feu":2.0},{"mkt":"840","year":2026,"month":6,"vessel":"CMA CGM PALAIS ROYAL 0FMM6W1MA","feu":3.0},{"mkt":"840","year":2026,"month":6,"vessel":"EVER ACE 0LANBW1MA","feu":2.0},{"mkt":"840","year":2026,"month":6,"vessel":"BEIJING MAERSK 625W","feu":1.0},{"mkt":"840","year":2026,"month":6,"vessel":"HAMBURG EXPRESS 624W","feu":1.0},{"mkt":"840","year":2026,"month":6,"vessel":"OOCL ZEEBRUGGE 0VAO5W1MA","feu":4.0},{"mkt":"840","year":2026,"month":6,"vessel":"OOCL SCANDINAVIA 02MNXW1MA","feu":1.0},{"mkt":"840","year":2026,"month":6,"vessel":"GENOVA EXPRESS 625W","feu":1.0}]},"993":{"monthly":[{"mkt":"993","year":2026,"month":1,"feu":0.5},{"mkt":"993","year":2026,"month":2,"feu":1.5},{"mkt":"993","year":2026,"month":3,"feu":0.5},{"mkt":"993","year":2026,"month":4,"feu":3.5},{"mkt":"993","year":2026,"month":5,"feu":1.5},{"mkt":"993","year":2026,"month":6,"feu":2.0}],"vessels":[{"mkt":"993","year":2026,"month":1,"vessel":"SITC XIANDE 2603N","feu":0.5},{"mkt":"993","year":2026,"month":2,"vessel":"INESSA 074N","feu":0.5},{"mkt":"993","year":2026,"month":2,"vessel":"HANSA BREITENBURG 089N","feu":1.0},{"mkt":"993","year":2026,"month":3,"vessel":"MILD ROSE 2608N","feu":0.5},{"mkt":"993","year":2026,"month":4,"vessel":"CNC SULAWESI 0CG6QN1NC","feu":1.0},{"mkt":"993","year":2026,"month":4,"vessel":"MILD JASMINE 2613N","feu":0.5},{"mkt":"993","year":2026,"month":4,"vessel":"MILD ORCHID 2615N","feu":2.0},{"mkt":"993","year":2026,"month":5,"vessel":"GSL MAREN 028N","feu":1.5},{"mkt":"993","year":2026,"month":6,"vessel":"MILD ROSE 2622N","feu":2.0}]}};
+const MO = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const C  = {'992':'#3b82f6','993':'#f59e0b','840':'#10b981'};
+const LBL= {'992':'992 – US','993':'993 – JP','840':'840 – EU'};
+
+let MONTHLY=[], VESSELS=[], allPeriods=[];
+let aMkt=['all'], aMon=['all'];
+let barInst=null, donutInst=null;
+
+function init(){
+  MONTHLY=[]; VESSELS=[];
+  ['992','840','993'].forEach(mkt=>{
+    if(!RAW[mkt]) return;
+    MONTHLY=MONTHLY.concat(RAW[mkt].monthly||[]);
+    VESSELS=VESSELS.concat(RAW[mkt].vessels||[]);
+  });
+  const pm=new Map();
+  MONTHLY.forEach(d=>{
+    const k=`${d.year}-${String(d.month).padStart(2,'0')}`;
+    if(!pm.has(k)) pm.set(k,{year:d.year,month:d.month});
+  });
+  allPeriods=[...pm.values()].sort((a,b)=>a.year!==b.year?a.year-b.year:a.month-b.month);
+  buildMon();
+  const total=[...MONTHLY].reduce((s,d)=>s+d.feu,0);
+  document.getElementById('ts-label').textContent=`${MONTHLY.length + VESSELS.length} records loaded`;
+  render();
+}
+
+function buildMon(){
+  const mf=document.getElementById('mfilter');
+  [...mf.querySelectorAll('.mchip:not([data-k="all"])')].forEach(e=>e.remove());
+  allPeriods.forEach(p=>{
+    const k=`${p.year}-${p.month}`;
+    const s=document.createElement('span');
+    s.className='mchip'; s.dataset.k=k;
+    s.textContent=`${MO[p.month]}'${String(p.year).slice(2)}`;
+    s.onclick=()=>toggleMon(k);
+    mf.appendChild(s);
+  });
+}
+function toggleM(m){
+  if(m==='all'){aMkt=['all'];}
+  else{aMkt=aMkt.filter(x=>x!=='all');aMkt.includes(m)?aMkt=aMkt.filter(x=>x!==m):aMkt.push(m);if(!aMkt.length)aMkt=['all'];}
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',aMkt.includes(c.dataset.m)));
+  render();
+}
+function toggleMon(k){
+  if(k==='all'){aMon=['all'];}
+  else{aMon=aMon.filter(x=>x!=='all');aMon.includes(k)?aMon=aMon.filter(x=>x!==k):aMon.push(k);if(!aMon.length)aMon=['all'];}
+  document.querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on',aMon.includes('all')||aMon.includes(c.dataset.k)));
+  render();
+}
+function fd(arr){
+  return arr.filter(d=>{
+    const mok=aMkt.includes('all')||aMkt.includes(d.mkt);
+    const mnok=aMon.includes('all')||aMon.includes(`${d.year}-${d.month}`);
+    return mok&&mnok;
+  });
+}
+function fmt(n){const r=Math.round(n*10)/10;return r%1===0?r.toLocaleString():r.toFixed(1);}
+
+function render(){
+  const monthly=fd(MONTHLY), vessels=fd(VESSELS);
+  const mkts=aMkt.includes('all')?['992','840','993']:aMkt;
+  const tots={};
+  mkts.forEach(m=>{tots[m]=monthly.filter(d=>d.mkt===m).reduce((s,d)=>s+d.feu,0);});
+  const tot=Object.values(tots).reduce((s,v)=>s+v,0);
+
+  document.getElementById('kall').innerHTML=`${fmt(tot)}<span class="kunit">FEU</span>`;
+  document.getElementById('kall2').textContent=`${fmt(tot*2)} TEUs`;
+  document.getElementById('dc-val').textContent=fmt(tot);
+
+  ['992','840','993'].forEach(m=>{
+    const v=tots[m]||0;
+    const el=document.getElementById('k'+m);
+    if(el) el.innerHTML=`${fmt(v)}<span class="kunit">FEU</span>`;
+    const sub=document.getElementById('k'+m+'s');
+    if(sub) sub.textContent=tot>0?`${(v/tot*100).toFixed(1)}% · ${fmt(v*2)} TEUs`:'–';
+    const bar=document.getElementById('bar'+m);
+    if(bar) bar.style.width=(tot>0?(v/tot*100):0)+'%';
+  });
+
+  renderBar(monthly,mkts);
+  renderDonut(tots,tot,mkts);
+  renderTable(vessels,tot);
+}
+
+function renderBar(monthly,mkts){
+  const periods=allPeriods.filter(p=>aMon.includes('all')||aMon.includes(`${p.year}-${p.month}`));
+  const labels=periods.map(p=>`${MO[p.month]}'${String(p.year).slice(2)}`);
+  const datasets=mkts.map(m=>({
+    label:LBL[m],
+    data:periods.map(p=>{const r=monthly.find(d=>d.mkt===m&&d.year===p.year&&d.month===p.month);return r?Math.round(r.feu*10)/10:0;}),
+    backgroundColor:C[m]+'bb',borderColor:C[m],borderWidth:0,borderRadius:2,
+  }));
+  document.getElementById('leg').innerHTML=mkts.map(m=>`<div class="li"><div class="lb" style="background:${C[m]}"></div><span>${LBL[m]}</span></div>`).join('');
+  if(barInst) barInst.destroy();
+  barInst=new Chart(document.getElementById('barchart').getContext('2d'),{
+    type:'bar',data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y} FEU (${fmt(c.parsed.y*2)} TEU)`}}},
+      scales:{
+        x:{stacked:true,ticks:{color:'#475569',font:{size:9},autoSkip:false,maxRotation:45},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.06)'}},
+        y:{stacked:true,ticks:{color:'#475569',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.06)'}}
+      }
+    }
+  });
+}
+function renderDonut(tots,tot,mkts){
+  const data=mkts.map(m=>Math.round((tots[m]||0)*10)/10);
+  const colors=mkts.map(m=>C[m]);
+  document.getElementById('dleg').innerHTML=mkts.map((m,i)=>`
+    <div class="dleg-item"><div class="dleg-dot" style="background:${colors[i]}"></div>
+    <span class="dleg-label">${LBL[m]}</span>
+    <span class="dleg-val" style="color:${colors[i]}">${fmt(tots[m]||0)}</span></div>`).join('');
+  if(donutInst) donutInst.destroy();
+  donutInst=new Chart(document.getElementById('donut').getContext('2d'),{
+    type:'doughnut',data:{labels:mkts.map(m=>LBL[m]),datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:3}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'72%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} FEU (${tot>0?(c.parsed/tot*100).toFixed(1):0}%)`}}}
+    }
+  });
+}
+function renderTable(vessels,tot){
+  const tbody=document.getElementById('tbody');
+  const nd=document.getElementById('nodata');
+  document.getElementById('tcnt').textContent=`${vessels.length} vessels`;
+  const rows=[...vessels].sort((a,b)=>a.year!==b.year?a.year-b.year:a.month!==b.month?a.month-b.month:a.mkt.localeCompare(b.mkt)||b.feu-a.feu);
+  if(!rows.length){tbody.innerHTML='';nd.style.display='block';return;}
+  nd.style.display='none';
+  const mx=Math.max(...rows.map(d=>d.feu),1);
+  tbody.innerHTML=rows.map(d=>{
+    const bw=Math.max(3,Math.round(d.feu/mx*55));
+    return `<tr>
+      <td style="color:var(--dim)">${d.year}</td>
+      <td style="color:var(--dim)">${MO[d.month]}</td>
+      <td><span class="tag t${d.mkt}">${d.mkt.toUpperCase()}</span></td>
+      <td style="color:var(--muted)">${d.vessel}</td>
+      <td><span class="barmini" style="width:${bw}px;background:${C[d.mkt]}"></span><span style="font-weight:600">${fmt(d.feu)}</span></td>
+      <td style="color:var(--dim)">${fmt(d.feu*2)}</td>
+      <td style="color:var(--dim)">${tot>0?(d.feu/tot*100).toFixed(1)+'%':'–'}</td>
+    </tr>`;
+  }).join('');
+}
+
+init();
+</script>
+</body>
+</html>
